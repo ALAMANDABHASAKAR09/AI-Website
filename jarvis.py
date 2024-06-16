@@ -19,7 +19,7 @@ import uuid
 import webbrowser
 
 # Configure the Gemini model
-genai.configure(api_key="AIzaSyCk24LgF1T9VW4fqltn8rubr2wYFFmJpEk")
+genai.configure(api_key="YOUR-GEMINI-KEY")
 instruction2llm = '''
 "Please respond only in JSON format. When I provide text for analysis, respond with the appropriate module, its parameters, the count of those parameters, a success flag, and a brief description. If you cannot understand the input, respond with 'Sorry, I can't understand.' Here are additional modules to be integrated into our talking robot program, along with examples of inputs and their expected outputs:
 
