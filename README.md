@@ -1,3 +1,7 @@
+<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7203365837452230658" height="2021" width="504" frameborder="0" allowfullscreen="" title="Embedded post"></iframe>
+
+https://www.linkedin.com/posts/alamanda-bhaskar_aiforgood-techinnovation-airevolution-activity-7203366565323403264-wwNV?utm_source=share&utm_medium=member_desktop
+
 This is an FLASK APPLICATION download necessary pacakages and files from huggingface.com
 
 # AI-Website
