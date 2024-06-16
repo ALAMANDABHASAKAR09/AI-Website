@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="style3.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts Link For Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0" />
+    <script src="app2.js" defer></script>
+    <style>
+      /* Import Google font - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  background: #E3F2FD;
+}
+.chatbot-toggler {
+  position: fixed;
+  bottom: 30px;
+  right: 35px;
+  outline: none;
+  border: none;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #0c011e;
+  transition: all 0.2s ease;
+}
+body.show-chatbot .chatbot-toggler {
+  transform: rotate(90deg);
+}
+.chatbot-toggler span {
+  color: #fff;
+  position: absolute;
+}
+.chatbot-toggler span:last-child,
+body.show-chatbot .chatbot-toggler span:first-child  {
+  opacity: 0;
+}
+body.show-chatbot .chatbot-toggler span:last-child {
+  opacity: 1;
+}
+.chatbot {
+  position: fixed;
+  right: 35px;
+  bottom: 90px;
+  width: 1300px;
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.5);
+  transform-origin: bottom right;
+  box-shadow: 0 0 128px 0 rgba(0,0,0,0.1),
+              0 32px 64px -48px rgba(0,0,0,0.5);
+  transition: all 0.1s ease;
+}
+body.show-chatbot .chatbot {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+.chatbot header {
+  padding: 16px 0;
+  position: relative;
+  text-align: center;
+  color: #fff;
+  background: #724ae8;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.chatbot header span {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  display: none;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+header h2 {
+  font-size: 1.4rem;
+}
+.chatbot .chatbox {
+  overflow-y: auto;
+  height: 400px;
+  padding: 30px 20px 100px;
+}
+.chatbot :where(.chatbox, textarea)::-webkit-scrollbar {
+  width: 6px;
+}
+.chatbot :where(.chatbox, textarea)::-webkit-scrollbar-track {
+  background: #fff;
+  border-radius: 25px;
+}
+.chatbot :where(.chatbox, textarea)::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 25px;
+}
+.chatbox .chat {
+  display: flex;
+  list-style: none;
+}
+.chatbox .outgoing {
+  margin: 20px 0;
+  justify-content: flex-end;
+}
+.chatbox .incoming span {
+  width: 32px;
+  height: 32px;
+  color: #fff;
+  cursor: default;
+  text-align: center;
+  line-height: 32px;
+  align-self: flex-end;
+  background: #724ae8;
+  border-radius: 4px;
+  margin: 0 10px 7px 0;
+}
+.chatbox .chat p {
+  white-space: pre-wrap;
+  padding: 12px 16px;
+  border-radius: 10px 10px 0 10px;
+  max-width: 75%;
+  color: #fff;
+  font-size: 0.95rem;
+  background: #724ae8;
+}
+.chatbox .incoming p {
+  border-radius: 10px 10px 10px 0;
+}
+.chatbox .chat p.error {
+  color: #721c24;
+  background: #f8d7da;
+}
+.chatbox .incoming p {
+  color: #000;
+  background: #f2f2f2;
+}
+.chatbot .chat-input {
+  display: flex;
+  gap: 5px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
+  padding: 3px 20px;
+  border-top: 1px solid #ddd;
+}
+.chat-input textarea {
+  height: 55px;
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  max-height: 180px;
+  padding: 15px 15px 15px 0;
+  font-size: 0.95rem;
+}
+.chat-input span {
+  align-self: flex-end;
+  color: #724ae8;
+  cursor: pointer;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  visibility: hidden;
+  font-size: 1.35rem;
+}
+.chat-input textarea:valid ~ span {
+  visibility: visible;
+}
+
+@media (max-width: 490px) {
+  .chatbot-toggler {
+    right: 20px;
+    bottom: 20px;
+  }
+  .chatbot {
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    border-radius: 0;
+    width: 100%;
+  }
+  .chatbot .chatbox {
+    height: 90%;
+    padding: 25px 15px 100px;
+  }
+  .chatbot .chat-input {
+    padding: 5px 15px;
+  }
+  .chatbot header span {
+    display: block;
+  }
+}
+    </style>
+  </head>
+  <body>
+    <button class="chatbot-toggler">
+      <span class="material-symbols-rounded">mode_comment</span>
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <div class="chatbot">
+      
+      <header>
+        <h2>Illusion AI</h2>
+        <span class="close-btn material-symbols-outlined">close</span>
+      </header>
+      <ul class="chatbox">
+        <li class="chat incoming">
+          <span class="material-symbols-outlined">smart_toy</span>
+          <p class="line-1 anim-typewriter">Hi there 👋<br>How can I help you today?</p>
+        </li>
+      </ul>
+      <div class="chat-input">
+        <textarea placeholder="Enter a message..." spellcheck="false" required></textarea>
+        <span id="send-btn" class="material-symbols-rounded">send</span>
+        <!-- <button id="speak-btn">Speak with me</button>
+        <button id="exit-btn">Exit</button> -->
+      </div>
+    </div>
+    <script>
+const chatbotToggler = document.querySelector(".chatbot-toggler");
+const closeBtn = document.querySelector(".close-btn");
+const chatbox = document.querySelector(".chatbox");
+const chatInput = document.querySelector(".chat-input textarea");
+const sendChatBtn = document.querySelector(".chat-input span");
+
+let userMessage = null; // Variable to store user's message
+const inputInitHeight = chatInput.scrollHeight;
+
+const createChatLi = (message, className) => {
+    // Create a chat <li> element with passed message and className
+    const chatLi = document.createElement("li");
+    chatLi.classList.add("chat", `${className}`);
+    let chatContent = className === "outgoing" ? `<p></p>` : `<span class="material-symbols-outlined">smart_toy</span><p></p>`;
+    chatLi.innerHTML = chatContent;
+    chatLi.querySelector("p").textContent = message;
+    return chatLi; // return chat <li> element
+}
+
+// Function to check if the user's message indicates a request to show videos
+const isVideoRequest = (message) => {
+    return message.toLowerCase().includes("show me the videos of");
+};
+
+// Function to extract the content from the user's message
+const extractContent = (message) => {
+    // You can implement your own logic to extract the content from the message
+    // For simplicity, let's assume that the content follows "show me the videos of [content]" pattern
+    const startIndex = message.toLowerCase().indexOf("show me the videos of") + 21;
+    return message.substring(startIndex).trim();
+};
+
+// Function to perform a video search
+const searchVideos = async (content) => {
+    try {
+        // Implement your video search logic here
+        // This could involve querying a video API like YouTube or Vimeo
+        // For this example, we'll simulate a search and return dummy results
+        const dummyResults = [
+            { title: "Video 1", url: "https://www.example.com/video1" },
+            { title: "Video 2", url: "https://www.example.com/video2" },
+            { title: "Video 3", url: "https://www.example.com/video3" }
+        ];
+        return dummyResults;
+    } catch (error) {
+        console.error("Error occurred while searching for videos:", error);
+        return null;
+    }
+};
+
+const handleChat = async () => {
+    userMessage = chatInput.value.trim(); // Get user entered message and remove extra whitespace
+    if (!userMessage) return;
+
+    // Clear the input textarea and set its height to default
+    chatInput.value = "";
+    chatInput.style.height = `${inputInitHeight}px`;
+
+    // Append the user's message to the chatbox
+    chatbox.appendChild(createChatLi(userMessage, "outgoing"));
+    chatbox.scrollTo(0, chatbox.scrollHeight);
+    
+    // Display "Thinking..." message while waiting for the response
+    const incomingChatLi = createChatLi("Thinking...", "incoming");
+    chatbox.appendChild(incomingChatLi);
+    chatbox.scrollTo(0, chatbox.scrollHeight);
+
+    // Check if the user's message indicates a request to show videos
+    if (isVideoRequest(userMessage)) {
+        // Extract the content from the message
+        const content = extractContent(userMessage);
+        if (content) {
+            // Perform a video search to find videos related to the content
+            const videoResults = await searchVideos(content);
+            if (videoResults) {
+                // Present the video results to the user
+                incomingChatLi.querySelector("p").innerHTML = `Here are some videos related to ${content}:<br>`;
+                videoResults.forEach((video, index) => {
+                    incomingChatLi.querySelector("p").innerHTML += `${index + 1}. <a href="${video.url}" target="_blank">${video.title}</a><br>`;
+                });
+                incomingChatLi.querySelector("p").innerHTML += `You can open these links manually to watch the videos.`;
+                chatbox.scrollTo(0, chatbox.scrollHeight);
+                return; // Exit the function
+            }
+        }
+    }
+
+    // Send the user's message to the server and get the response
+    try {
+        const response = await fetch('/response', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ input: userMessage })
+        });
+        const data = await response.json();
+        incomingChatLi.querySelector("p").textContent = data.response;
+    } catch (error) {
+        incomingChatLi.querySelector("p").textContent = "Oops! Something went wrong. Please try again.";
+    }
+
+    chatbox.scrollTo(0, chatbox.scrollHeight);
+}
+
+chatInput.addEventListener("input", () => {
+    // Adjust the height of the input textarea based on its content
+    chatInput.style.height = `${inputInitHeight}px`;
+    chatInput.style.height = `${chatInput.scrollHeight}px`;
+});
+
+chatInput.addEventListener("keydown", (e) => {
+    // If Enter key is pressed without Shift key and the window 
+    // width is greater than 800px, handle the chat
+    if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
+        e.preventDefault();
+        handleChat();
+    }
+});
+
+sendChatBtn.addEventListener("click", handleChat);
+closeBtn.addEventListener("click", () => document.body.classList.remove("show-chatbot"));
+chatbotToggler.addEventListener("click", () => document.body.classList.toggle("show-chatbot"));
+
+    </script>
+  </body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    body{
+      background-image: url('url.jpg');
+      background-repeat: no-repeat;
+      background-attachment: fixed;  
+      background-size: cover;
+    }
+  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Q&A</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+      body{
+	position: relative;
+	margin: 0;
+  width: 1500px;
+  height: 50px;
+}
+
+canvas{
+
+	cursor: crosshair;
+}
+.head-font{
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+li{
+  font: italic 1.2rem "Fira Sans", serif;
+}
+    </style>
+</head>
+<body>
+    <nav>
+        <ul class="head-font">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('qa') }}">Q&A Image</a></li>
+            <li><a href="{{ url_for('news') }}">HOT NEWS</a></li>
+            <li><a href="{{ url_for('bot') }}"> Talk With Me</a></li>
+            <li><a href="{{ url_for('gaming') }}"> TicTacToe </a></li>
+            <li><a href="{{ url_for('scramble') }}"> Guess Word </a></li>
+
+        </ul>
+    </nav>
+    <p class="ani line-1 anim-typewriter">Welcome to Illusion models.com .....!</p>
+
+    <canvas id="c"><p class="line-1 anim-typewriter">Welcome to Illusion models.com .....!</p></canvas>
+    <p class="line-1 anim-typewriter">Welcome to Illusion models.com .....!</p>
+    
+    <!-- <button id="speak-btn">Speak with me</button>
+    <button id="exit-btn">Exit</button>
+       -->
+    <style>
+        .dt {
+            font-size: 30px;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+        .button {
+  background-color: #04AA6D; /* Green */
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+.button1:hover {
+  background-color: #04AA6D;
+  color: white;
+}
+       .card {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  width: 450px;
+  border-radius: 5px;
+  height: 300px;
+  margin-left: 500px;
+  margin-top: 100px;
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+img {
+  border-radius: 5px 5px 0 0;
+}
+
+.container {
+  padding: 2px 14px;
+}
+        body {
+          background-image: url('url.jpg');
+            font-family: 'Pacifico', cursive;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        nav {
+            background-color: #004080;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav ul li a {
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        nav ul li a:hover {
+            background-color: #333;
+            color: white;
+        }
+
+        .btn-primary {
+            background-color: #004080;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #003366;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+    
+</body>
+
+<script>
+  
+  window.onload = function() {
+
+var c = document.getElementById('c'),
+  $ = c.getContext('2d'),
+  w = c.width = window.innerWidth,
+  h = c.height = window.innerHeight;
+
+var i, bubblesNumber = w * h > 750000 ? 200 : 150,
+  objects = [],
+  maxRadius = w * h > 500000 ? 50 : 35,
+  maxYVelocity = 2;
+
+function randomInRange(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function Vector(x, y) {
+  this.x = x || 0;
+  this.y = y || 0;
+}
+
+Vector.prototype.add = function(v) {
+  this.x += v.x;
+  this.y += v.y;
+  return this;
+};
+
+Vector.prototype.multiply = function(value) {
+  this.x *= value;
+  this.y *= value;
+  return this;
+};
+
+Vector.prototype.getMagnitude = function() {
+  return Math.sqrt(this.x * this.x + this.y * this.y);
+};
+
+function Fragment(position, velocity, radius, hue) {
+  this.position = position;
+  this.velocity = velocity;
+  this.startSpeed = this.velocity.getMagnitude();
+  this.radius = radius;
+  this.hue = hue;
+}
+
+Fragment.prototype.update = function(world) {
+  this.velocity.multiply(world.physicalProperties.friction);
+  this.position.add(this.velocity);
+  this.radius *= this.velocity.getMagnitude() / this.startSpeed;
+  if (this.radius < 0.1) {
+    world.objects.splice(world.objects.indexOf(this), 1);
+  }
+}
+
+Fragment.prototype.render = function($) {
+  $.beginPath();
+  $.fillStyle = 'hsl(' + this.hue + ', 100%, 50%)';
+  $.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+  $.fill();
+};
+
+function Bubble(x, y, speed, radius, fragments, swing, hue) {
+  this.x = x;
+  this.y = y;
+  this.startX = this.x;
+  this.speed = speed;
+  this.radius = radius;
+  this.fragments = fragments;
+  this.swing = swing;
+  this.hue = hue;
+}
+
+Bubble.prototype.update = function(world) {
+  this.x = this.startX + Math.cos(this.y / 80) * this.swing;
+  this.y += this.speed;
+  if (this.y + this.radius < 0) {
+    this.y = world.physicalProperties.height + this.radius;
+  }
+}
+
+Bubble.prototype.render = function($) {
+  $.beginPath();
+  $.fillStyle = 'hsl(' + this.hue + ', 100%, 50%)';
+  $.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+  $.fill();
+};
+
+Bubble.prototype.pop = function(world) {
+  world.objects.splice(world.objects.indexOf(this), 1);
+  for (var i = 0; i < this.fragments; i++) {
+    world.objects.push(new Fragment(new Vector(this.x, this.y), new Vector(randomInRange(-2, 2), randomInRange(-2, 2)), randomInRange(2, this.radius / 4), this.hue));
+  }
+};
+
+function World(physicalProperties, objects, ctx, background) {
+  this.physicalProperties = physicalProperties;
+  this.objects = objects;
+  this.ctx = ctx;
+  this.background = background;
+  this.frameID = 0;
+}
+
+World.prototype.update = function() {
+  for (var i = 0; i < this.objects.length; i++) {
+    this.objects[i].update(this);
+  }
+};
+
+World.prototype.render = function() {
+  this.ctx.clearRect(0, 0, this.physicalProperties.width, this.physicalProperties.height);
+  if (this.background) {
+    this.ctx.fillStyle = this.background;
+    this.ctx.fillRect(0, 0, this.physicalProperties.width, this.physicalProperties.height);
+  }
+  for (var i = 0; i < this.objects.length; i++) {
+    this.objects[i].render(this.ctx);
+  }
+};
+
+World.prototype.animate = function() {
+  this.update();
+  this.render();
+  this.frameID = requestAnimationFrame(this.animate.bind(this));
+};
+
+for (i = 0; i < bubblesNumber; i++) {
+  objects.push(new Bubble(Math.random() * w, Math.random() * h, -randomInRange(0.5, maxYVelocity), randomInRange(5, maxRadius), randomInRange(7, 10), randomInRange(-40, 40), randomInRange(0, 360)));
+}
+
+var world = new World({
+  width: c.width,
+  height: c.height,
+  friction: 0.997
+}, objects, $, 'rgb(0, 50, 255)');
+
+$.globalCompositeOperation = 'lighter';
+
+world.animate();
+
+window.addEventListener('resize', function() {
+  w = world.physicalProperties.width = c.width = window.innerWidth;
+  h = world.physicalProperties.height = c.height = window.innerHeight;
+  $.globalCompositeOperation = 'lighter';
+});
+
+window.addEventListener('mousemove', function(e) {
+  for (var i = 0; i < world.objects.length; i++) {
+    if ((world.objects[i] instanceof Bubble) && (e.clientX > world.objects[i].x - world.objects[i].radius && e.clientX < world.objects[i].x + world.objects[i].radius && e.clientY < world.objects[i].y + world.objects[i].radius && e.clientY > world.objects[i].y - world.objects[i].radius)) {
+      world.objects[i].pop(world);
+    }
+  }
+});
+
+window.addEventListener('touchmove', function(e) {
+  for (var i = 0; i < world.objects.length; i++) {
+    if ((world.objects[i] instanceof Bubble) && (e.touches[0].clientX > world.objects[i].x - world.objects[i].radius && e.touches[0].clientX < world.objects[i].x + world.objects[i].radius && e.touches[0].clientY < world.objects[i].y + world.objects[i].radius && e.touches[0].clientY > world.objects[i].y - world.objects[i].radius)) {
+      world.objects[i].pop(world);
+    }
+  }
+});
+
+};
+</script>
+</html>
+

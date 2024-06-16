@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responses</title>
+</head>
+<body>
+    <h1>All Responses</h1>
+    <ul id="responses-list"></ul>
+    <a href="/">Back to Home</a>
+    <script>
+        fetch('/responses')
+        .then(response => response.json())
+        .then(data => {
+            var responsesList = document.getElementById('responses-list');
+            data.forEach(response => {
+                var listItem = document.createElement('li');
+                listItem.textContent = response;
+                responsesList.appendChild(listItem);
+            });
+        });
+    </script>
+</body>
+</html>

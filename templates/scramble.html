@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Scramble - Gaming Edition</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212; /* Dark gray */
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .game-container {
+      background-color: #2b2b2b; /* Dark gray */
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    #word {
+      font-size: 2em;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    #guessInput {
+      font-size: 1.2em;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #3a3a3a; /* Dark gray */
+      color: #fff;
+    }
+
+    #guessButton, #nextButton {
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      background-color: #4caf50; /* Green */
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    #guessButton:hover, #nextButton:hover {
+      background-color: #45a049; /* Darker green */
+    }
+
+    .message {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+
+    #score {
+      font-size: 1.5em;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #3a3a3a; /* Dark gray */
+      border-radius: 5px;
+    }
+
+    footer {
+      margin-top: 20px;
+      color: #aaa;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>Word Scramble - Gaming Edition</h1>
+    <div id="word" class="word-display"></div>
+    <input type="text" id="guessInput" placeholder="Enter your guess">
+    <button id="guessButton">Guess</button>
+    <div id="message" class="message"></div>
+    <button id="nextButton">Next Word</button>
+    <div id="score" class="score">Score: <span id="scoreValue">0</span></div>
+  </div>
+
+
+  <script>
+    const words = [
+    'algorithm', 'binary', 'cache', 'data', 'encryption', 'firewall', 'git', 'hashing', 'interface', 
+  'JavaScript', 'kernel', 'Linux', 'middleware', 'network', 'operating', 'protocol', 'queue', 'router', 
+  'server', 'terminal', 'Unix', 'virtualization', 'web', 'Xcode', 'YAML', 'z-index',
+  // DevOps related
+  'agile', 'CI/CD', 'containerization', 'deployment', 'elasticity', 'feedback', 'GitHub', 'infrastructure', 
+  'Jenkins', 'Kubernetes', 'monitoring', 'orchestration', 'pipeline', 'quality', 'reliability', 'scalability', 
+  'testing', 'uptime', 'versioning', 'workflow', 'XaaS', 'YAML', 'zero-downtime'
+    ];
+    let currentWordIndex = 0;
+    let score = 0;
+    let wrongGuesses = 0;
+
+    function scrambleWord(word) {
+      return word.split('').sort(() => Math.random() - 0.5).join('');
+    }
+
+    function displayWord() {
+      const wordDisplay = document.getElementById('word');
+      wordDisplay.textContent = scrambleWord(words[currentWordIndex]);
+    }
+
+    function checkGuess() {
+  const guessInput = document.getElementById('guessInput');
+  const guess = guessInput.value.trim().toLowerCase();
+  if (guess === words[currentWordIndex]) {
+    document.getElementById('message').textContent = 'Correct!';
+    score++;
+    document.getElementById('scoreValue').textContent = score;
+    guessInput.value = '';
+  } else {
+    wrongGuesses++;
+    if (wrongGuesses >= 3) {
+      const correctWord = words[currentWordIndex];
+      document.getElementById('message').textContent = `Sorry, the correct word is: ${correctWord}`;
+      wrongGuesses = 0; // Reset wrong guesses
+      nextWord(); // Display the next word
+    } else {
+      document.getElementById('message').textContent = 'Incorrect! Try again.';
+    }
+  }
+}
+
+
+    function nextWord() {
+      currentWordIndex = Math.floor(Math.random() * words.length);
+      document.getElementById('message').textContent = '';
+      displayWord();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      nextWord();
+      document.getElementById('guessButton').addEventListener('click', checkGuess);
+      document.getElementById('nextButton').addEventListener('click', nextWord);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Q&A</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card {
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-image {
+            border-radius: 20px;
+            padding: 10px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .rounded-circle {
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .navbar {
+            background-color: #343a40;
+        }
+
+        .navbar-dark .navbar-nav .nav-link {
+            color: #fff;
+        }
+
+        .navbar-dark .navbar-brand {
+            color: #fff;
+        }
+
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="nav-link text-light" href="{{ url_for('index') }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="19" fill="currentColor" class="bi bi-house-door-fill mx-1')" viewBox="0 0 20 15 mx-2">
+            <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5Z"/>
+          </svg>Home <span class="sr-only">(current)</span></a>        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            <!-- <li class="nav-item"> -->
+                <a class="nav-link" href="{{ url_for('qa') }}">Q&A Image</a>
+            <!-- </li>  -->
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active mx-2">
+                    <a class="navbar-brand" href="{{ url_for('index') }}">Visual Question Answering</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card-image">
+                    <div class="card-header">
+                        Image Capture
+                    </div>
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                        <div id="imageContainer" class="text-center">
+                            <video id="videoElement" autoplay style="max-width: 100%; max-height: 400px;"></video>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary btn-lg" id="captureButton">Capture Image</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        Ask a Question
+                    </div>
+                    <div class="card-body">
+                        <div class="mt-4">
+                            <input type="text" class="form-control" id="questionInput" name="question"
+                                placeholder="Enter your question">
+                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button class="btn btn-secondary btn-lg" id="askQuestionButton">Ask Question</button>
+                        <button class="btn btn-danger btn-lg" id="exitButton">Exit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-5">
+                    <div class="card-header">
+                        Answer
+                    </div>
+                    <div class="card-body" style="height: 200px; overflow-y: auto;">
+                        <div id="answerContainer" class="text-center">
+                            <h3 id="answerText"></h3>
+                            <div                                class="processing-animation">
+                                <img class="img-size" src="{{ url_for('static', filename='images/processing-animation.gif') }}"
+                                    alt="Processing Animation">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Global variable to store the captured image
+        var capturedImage = null;
+
+        // Function to start video stream and show in video element
+        function startVideo() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    var videoElement = document.getElementById('videoElement');
+                    videoElement.srcObject = stream;
+                })
+                .catch(function (err) {
+                    console.log("An error occurred: " + err);
+                });
+        }
+
+        // Capture Image button
+        document.getElementById("captureButton").addEventListener("click", function () {
+            var videoElement = document.getElementById('videoElement');
+            var canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            var context = canvas.getContext('2d');
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            capturedImage = canvas.toDataURL('image/png');
+            document.getElementById('imageContainer').innerHTML = '<img src="' + capturedImage +
+                '" style="max-width: 100%; max-height: 100%;">';
+            videoElement.srcObject.getVideoTracks()[0].stop();
+        });
+
+        // Ask Question button
+        document.getElementById("askQuestionButton").addEventListener("click", function () {
+            var question = document.getElementById("questionInput").value;
+            if (!capturedImage) {
+                alert("Please capture an image first.");
+                return;
+            }
+            // Show processing animation
+            document.querySelector('.processing-animation').style.display = 'block';
+            // Send the question and captured image data to the Flask backend
+            fetch('/qa', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    question: question,
+                    image_data: capturedImage
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide processing animation
+                    document.querySelector('.processing-animation').style.display = 'none';
+                    // Display the answer in the answer container
+                    document.getElementById('answerText').textContent = "Answer: " + data.answer;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        // Exit button
+        document.getElementById("exitButton").addEventListener("click", function () {
+            // Handle exit logic here (redirect or close window)
+            // For example, you can redirect to the home page
+            window.location.href = "{{ url_for('index') }}";
+        });
+
+        // Start video stream when page loads
+        startVideo();
+    </script>
+
+</body>
+
+</html>
+
