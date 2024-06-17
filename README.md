@@ -16,9 +16,9 @@ I've developed during my internship at AIMERS! 🤖Illusion ai - chatbot is your
 '''
 ![Screenshot 2024-06-16 215734](https://github.com/ALAMANDABHASAKAR09/AI-Website/assets/134359195/3f330b64-0dcc-4be2-834e-72bf525752d4)
 ![image](https://github.com/ALAMANDABHASAKAR09/AI-Website/assets/134359195/2cb6bfc7-f066-4770-80ce-7d96f5f8a602)
+![image](https://github.com/ALAMANDABHASAKAR09/AI-Website/assets/134359195/7d55a6b6-f094-4ed7-93ac-4b3d0589eb13)
 ![image](https://github.com/ALAMANDABHASAKAR09/AI-Website/assets/134359195/d18290a8-b2a0-404b-96e9-aafeb387f9ef)
 ![image](https://github.com/ALAMANDABHASAKAR09/AI-Website/assets/134359195/bfcabc0f-9e30-4dde-974c-e8a5b99e92aa)
-![image](https://github.com/ALAMANDABHASAKAR09/AI-Website/assets/134359195/175062e4-affe-4c26-88fb-08fb51f0065c)
 ![image](https://github.com/ALAMANDABHASAKAR09/AI-Website/assets/134359195/8327dd31-826f-47a5-a418-7681948f7749)
 
 
